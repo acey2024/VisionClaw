@@ -6,10 +6,13 @@ on:
 jobs:
   build:
     name: Build Unsigned iOS IPA
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Show Xcode Version
+        run: xcodebuild -version
 
       - name: Prepare Secrets.swift
         working-directory: samples/CameraAccess/CameraAccess
