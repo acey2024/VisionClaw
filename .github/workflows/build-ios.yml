@@ -11,8 +11,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Show Xcode Version
-        run: xcodebuild -version
+      - name: Prepare Secrets.swift
+        working-directory: samples/CameraAccess/CameraAccess
+        run: |
+          cp Secrets.swift.example Secrets.swift
+          sed -i '' 's/YOUR_OPENCLAW_GATEWAY_TOKEN/modelark2026/g' Secrets.swift
+          sed -i '' 's/http:\/\/YOUR_MAC_HOSTNAME.local/http:\/\/192.168.1.229/g' Secrets.swift
 
       - name: Build CameraAccess (.app)
         working-directory: samples/CameraAccess
