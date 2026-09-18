@@ -1,0 +1,44 @@
+name: Build VisionClaw iOS IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Unsigned iOS IPA
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show Xcode Version
+        run: xcodebuild -version
+
+      - name: Build CameraAccess (.app)
+        working-directory: samples/CameraAccess
+        run: |
+          xcodebuild clean build \
+            -project CameraAccess.xcodeproj \
+            -scheme CameraAccess \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CONFIGURATION_BUILD_DIR="$(pwd)/build/Release-iphoneos"
+
+      - name: Package IPA
+        working-directory: samples/CameraAccess
+        run: |
+          mkdir -p build/Payload
+          cp -r build/Release-iphoneos/CameraAccess.app build/Payload/
+          cd build
+          zip -qr CameraAccess.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CameraAccess-iOS-IPA
+          path: samples/CameraAccess/build/CameraAccess.ipa
+          retention-days: 7
