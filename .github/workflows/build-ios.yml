@@ -2,6 +2,9 @@ name: Build VisionClaw iOS IPA
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -20,6 +23,9 @@ jobs:
           cp Secrets.swift.example Secrets.swift
           sed -i '' 's/YOUR_OPENCLAW_GATEWAY_TOKEN/modelark2026/g' Secrets.swift
           sed -i '' 's/http:\/\/YOUR_MAC_HOSTNAME.local/http:\/\/192.168.1.229/g' Secrets.swift
+          if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
+            sed -i '' "s/YOUR_GEMINI_API_KEY/${{ secrets.GEMINI_API_KEY }}/g" Secrets.swift
+          fi
 
       - name: Build CameraAccess (.app)
         working-directory: samples/CameraAccess
